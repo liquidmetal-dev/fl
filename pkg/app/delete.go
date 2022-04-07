@@ -7,11 +7,6 @@ import (
 	flintlockv1 "github.com/weaveworks/flintlock/api/services/microvm/v1alpha1"
 )
 
-type DeleteInput struct {
-	Host string
-	UID  string
-}
-
 func (a *app) Delete(ctx context.Context, input *DeleteInput) error {
 	a.logger.Debugw("deleting microvm", "uid", input.UID, "host", input.Host)
 

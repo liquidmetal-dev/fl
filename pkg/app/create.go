@@ -15,24 +15,6 @@ import (
 	"github.com/weaveworks/flintlock/client/cloudinit/userdata"
 )
 
-type CreateInput struct {
-	Host              string
-	Name              string
-	Namespace         string
-	VCPU              int
-	MemoryInMb        int
-	KernelImage       string
-	KernelAddNetConf  bool
-	KernelFileName    string
-	RootImage         string
-	InitrdImage       string
-	InitrdFilename    string
-	NetworkInterfaces []string
-	MetadataFromFile  []string
-	Hostname          string
-	SSHKeyFile        string
-}
-
 func (a *app) Create(ctx context.Context, input *CreateInput) error {
 	a.logger.Debug("creating a microvm")
 
@@ -41,21 +23,11 @@ func (a *app) Create(ctx context.Context, input *CreateInput) error {
 		return fmt.Errorf("creating request: %w", err)
 	}
 
-	sshKey := ""
-	if input.SSHKeyFile != "" {
-		data, err := os.ReadFile(input.SSHKeyFile)
-		if err != nil {
-			return fmt.Errorf("reading ssh key file %s: %w", input.SSHKeyFile, err)
+	if !input.Metadata.IsEmpty() {
+		if metaErr := a.addUserdata(spec, input); metaErr != nil {
+			return fmt.Errorf("adding user-data: %w", metaErr)
 		}
-		sshKey = string(data)
 	}
-
-	vendorData, err := a.createVendorData(input.Hostname, sshKey)
-	if err != nil {
-		return fmt.Errorf("creating vendor data for microvm: %w", err)
-	}
-	fmt.Println(vendorData)
-	spec.Metadata["vendor-data"] = vendorData
 
 	client, err := a.createFlintlockClient(input.Host)
 	if err != nil {
@@ -72,6 +44,16 @@ func (a *app) Create(ctx context.Context, input *CreateInput) error {
 	}
 
 	a.logger.Infow("created microvm", "uid", *resp.Microvm.Spec.Uid, "name", input.Name, "namespace", input.Namespace, "host", input.Host)
+
+	return nil
+}
+
+func (a *app) addUserdata(spec *flintlocktypes.MicroVMSpec, input *CreateInput) error {
+	userData, err := a.createUserData(input.Metadata)
+	if err != nil {
+		return fmt.Errorf("creating user-data for microvm: %w", err)
+	}
+	spec.Metadata["user-data"] = userData
 
 	return nil
 }
@@ -181,18 +163,32 @@ func (a *app) convertCreateInputToReq(input *CreateInput) (*flintlocktypes.Micro
 	return req, nil
 }
 
-func (a *app) createVendorData(hostname, sshKey string) (string, error) {
-	vendorUserdata := &userdata.UserData{
+func (a *app) createUserData(metadata Metadata) (string, error) {
+	userMetadata := &userdata.UserData{
 		FinalMessage: "The fl booted system is good to go after $UPTIME seconds",
-		BootCommands: []string{
-			"ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf",
-		},
-	}
-	if hostname != "" {
-		vendorUserdata.HostName = hostname
 	}
 
-	if sshKey != "" {
+	if metadata.Message != "" {
+		userMetadata.FinalMessage = metadata.Message
+	}
+
+	if metadata.ResolvdFix {
+		userMetadata.BootCommands = []string{
+			"ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf",
+		}
+	}
+
+	if metadata.Hostname != "" {
+		userMetadata.HostName = metadata.Hostname
+	}
+
+	if metadata.SSHKeyFile != "" {
+		data, err := os.ReadFile(metadata.SSHKeyFile)
+		if err != nil {
+			return "", fmt.Errorf("reading ssh key file %s: %w", metadata.SSHKeyFile, err)
+		}
+		sshKey := string(data)
+
 		defaultUser := userdata.User{
 			Name: "ubuntu",
 		}
@@ -207,15 +203,14 @@ func (a *app) createVendorData(hostname, sshKey string) (string, error) {
 			sshKey,
 		}
 
-		vendorUserdata.Users = []userdata.User{defaultUser, rootUser}
+		userMetadata.Users = []userdata.User{defaultUser, rootUser}
 	}
 
-	data, err := yaml.Marshal(vendorUserdata)
+	data, err := yaml.Marshal(userMetadata)
 	if err != nil {
 		return "", fmt.Errorf("marshalling bootstrap data: %w", err)
 	}
-
-	dataWithHeader := append([]byte("#cloud-config\n"), data...)
+	dataWithHeader := append([]byte("## template: jinja\n#cloud-config\n\n"), data...)
 
 	return base64.StdEncoding.EncodeToString(dataWithHeader), nil
 }

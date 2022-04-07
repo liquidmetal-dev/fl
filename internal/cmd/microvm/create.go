@@ -51,8 +51,11 @@ func newCreateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&createInput.InitrdFilename, "initrd-filename", "", "name of the file in the image to use for the initial ramdisk")
 	cmd.Flags().StringSliceVar(&createInput.NetworkInterfaces, "network-interface", nil, "specify the network interfaces to attach. In the following format: name:type:[macaddress]:[ipaddress]")
 	cmd.Flags().StringSliceVar(&createInput.MetadataFromFile, "metadata-from-file", nil, "specify metadata to be available to your microvm. In the following format key=pathtofile")
-	cmd.Flags().StringVar(&createInput.Hostname, "hostname", "", "the hostname of the the microvm")
-	cmd.Flags().StringVar(&createInput.SSHKeyFile, "ssh-key-file", "", "an ssh key to use")
+	cmd.Flags().StringVar(&createInput.Metadata.Hostname, "metadata-hostname", "", "the hostname of the the microvm")
+	cmd.Flags().StringVar(&createInput.Metadata.SSHKeyFile, "metadata-ssh-key-file", "", "an ssh key to use")
+	cmd.Flags().BoolVar(&createInput.Metadata.ResolvdFix, "metadata-resolvd-fix", true, "include a systemd-resolvd fix for container root volumes")
+	cmd.Flags().StringVar(&createInput.Metadata.Message, "metadata-final-message", "", "set the cloud-init final message")
+
 	//TODO: additional command line args for kernel
 	//TODO: add additional volumes
 

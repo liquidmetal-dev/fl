@@ -9,12 +9,6 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type GetInput struct {
-	Host      string
-	Namespace string
-	UID       string
-}
-
 func (a *app) Get(ctx context.Context, input *GetInput) error {
 	if input.UID == "" {
 		a.logger.Debugw("getting all microvms", "host", input.Host)

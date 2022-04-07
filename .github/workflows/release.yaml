@@ -1,0 +1,38 @@
+name: release
+
+on:
+  push:
+    tags:
+    - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17.x
+      - name: Setup Syft
+        uses: anchore/sbom-action/download-syft@v0
+      - name: Generate release notes
+        run: |
+          gh api repos/{owner}/{repo}/releases/generate-notes -F tag_name=${{ github.ref }} --jq .body > ./changelog.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v1
+        with:
+          version: latest
+          args: release --release-notes=./changelog.md --skip-validate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
