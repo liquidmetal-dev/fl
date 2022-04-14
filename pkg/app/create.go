@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/moby/moby/pkg/namesgenerator"
 	"github.com/yitsushi/macpot"
 	"gopkg.in/yaml.v2"
 
@@ -21,6 +22,10 @@ func (a *app) Create(ctx context.Context, input *CreateInput) error {
 	spec, err := a.convertCreateInputToReq(input)
 	if err != nil {
 		return fmt.Errorf("creating request: %w", err)
+	}
+
+	if input.NameAutogenerate {
+		spec.Id = namesgenerator.GetRandomName(10)
 	}
 
 	if !input.Metadata.IsEmpty() {

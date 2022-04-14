@@ -1,11 +1,13 @@
 package microvm
 
 import (
-	"github.com/spf13/cobra"
+	"errors"
+	"fmt"
+
+	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"
 
 	"github.com/weaveworks-experiments/fl/pkg/app"
-	"github.com/weaveworks-experiments/fl/pkg/flags"
 )
 
 const (
@@ -15,31 +17,35 @@ fl microvm delete --host host1:9090 01FZZJV1XD2FKH2KY0NDB4MBRQ
 `
 )
 
-func newDeleteCommand() *cobra.Command {
+func newDeleteCommand() *cli.Command {
 	deleteInput := &app.DeleteInput{}
 
-	cmd := &cobra.Command{
-		Use:     "delete",
-		Short:   "delete a microvm from a host",
-		Example: deleteExamples,
-		Args:    cobra.ExactValidArgs(1),
-		PreRun: func(cmd *cobra.Command, args []string) {
-			flags.BindFlags(cmd)
-		},
-		Run: func(c *cobra.Command, args []string) {
-			deleteInput.UID = args[0]
+	cmd := &cli.Command{
+		Name:  "delete",
+		Usage: "delete a microvm from a host",
+		Action: func(ctx *cli.Context) error {
+			if ctx.Args().Len() == 0 {
+				return errors.New("you must supply the uid as an argument")
+			}
+			deleteInput.UID = ctx.Args().Get(0)
 
 			a := app.New(zap.S().With("action", "delete"))
-			err := a.Delete(c.Context(), deleteInput)
+			err := a.Delete(ctx.Context, deleteInput)
 			if err != nil {
-				zap.S().Errorw("failed deleting microvm", "error", err)
-				return
+				return fmt.Errorf("deleting microvm: %w", err)
 			}
+
+			return nil
+		},
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:        "host",
+				Usage:       "the flintlock host to delete the microvm on",
+				Destination: &deleteInput.Host,
+				Required:    true,
+			},
 		},
 	}
-
-	cmd.Flags().StringVar(&deleteInput.Host, "host", "", "the flintlock host to get the microvms from")
-	cmd.MarkFlagRequired("host")
 
 	return cmd
 }

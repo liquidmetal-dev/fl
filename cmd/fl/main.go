@@ -4,10 +4,8 @@ import (
 	"context"
 	"log"
 	"math/rand"
+	"os"
 	"time"
-
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	"github.com/weaveworks-experiments/fl/internal/cmd"
 )
@@ -16,15 +14,8 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 	ctx := context.Background()
 
-	cobra.OnInitialize(initConfig)
-
-	rootCmd := cmd.NewRootCmd()
-	if err := rootCmd.ExecuteContext(ctx); err != nil {
-		log.Fatal("failed executing root command")
+	app := cmd.NewApp()
+	if err := app.RunContext(ctx, os.Args); err != nil {
+		log.Fatalf("failed executing root command: %s", err)
 	}
-}
-
-func initConfig() {
-	viper.SetEnvPrefix("FL")
-	viper.AutomaticEnv()
 }
