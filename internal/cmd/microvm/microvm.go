@@ -1,31 +1,22 @@
 package microvm
 
 import (
-	"github.com/spf13/cobra"
-	"go.uber.org/zap"
+	"github.com/urfave/cli/v2"
 )
 
-func NewCommand() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "microvm",
-		Short: "perform microvm operations",
-		Run: func(c *cobra.Command, _ []string) {
-			if err := c.Help(); err != nil {
-				zap.S().Debugw("ingoring cobra error",
-					"error",
-					err.Error())
-			}
-		},
+func NewCommand() *cli.Command {
+	cmd := &cli.Command{
+		Name:        "microvm",
+		Usage:       "perform microvm operations",
+		Subcommands: []*cli.Command{},
 	}
 
-	createCmd := newCreateCommand()
-	cmd.AddCommand(createCmd)
-
-	getCmd := newGetCommand()
-	cmd.AddCommand(getCmd)
-
-	deleteCmd := newDeleteCommand()
-	cmd.AddCommand(deleteCmd)
+	subCommands := []*cli.Command{
+		newCreateCommand(),
+		newGetCommand(),
+		newDeleteCommand(),
+	}
+	cmd.Subcommands = append(cmd.Subcommands, subCommands...)
 
 	return cmd
 }

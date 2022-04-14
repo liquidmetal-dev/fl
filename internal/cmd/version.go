@@ -3,16 +3,17 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/spf13/cobra"
+	"github.com/urfave/cli/v2"
 )
 
-func newVersionCommand() *cobra.Command {
-	return &cobra.Command{
-		Use:   "version",
-		Short: "display version information",
-		Run: func(c *cobra.Command, _ []string) {
+func newVersionCommand() *cli.Command {
+	return &cli.Command{
+		Name:  "version",
+		Usage: "display version information",
+		Action: func(ctx *cli.Context) error {
 			fmt.Println("to do, add version information")
+
+			return nil
 		},
 	}
-
 }

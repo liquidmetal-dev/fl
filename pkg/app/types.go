@@ -3,6 +3,7 @@ package app
 type CreateInput struct {
 	Host              string
 	Name              string
+	NameAutogenerate  bool
 	Namespace         string
 	VCPU              int
 	MemoryInMb        int
