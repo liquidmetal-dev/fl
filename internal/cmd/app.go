@@ -3,8 +3,8 @@ package cmd
 import (
 	"github.com/urfave/cli/v2"
 
-	"github.com/weaveworks-experiments/fl/internal/cmd/microvm"
-	"github.com/weaveworks-experiments/fl/pkg/logging"
+	"github.com/weaveworks-liquidmetal/fl/internal/cmd/microvm"
+	"github.com/weaveworks-liquidmetal/fl/pkg/logging"
 )
 
 const (
