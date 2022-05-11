@@ -7,7 +7,7 @@ import (
 	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"
 
-	"github.com/weaveworks-experiments/fl/pkg/app"
+	"github.com/weaveworks-liquidmetal/fl/pkg/app"
 )
 
 const (
