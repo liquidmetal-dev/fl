@@ -40,6 +40,10 @@ func newCreateCommand() *cli.Command {
 		},
 		Action: func(ctx *cli.Context) error {
 			a := app.New(zap.S().With("action", "create"))
+
+			createInput.NetworkInterfaces = networkInterfaces.Value()
+			createInput.MetadataFromFile = metadataFromFile.Value()
+
 			if err := a.Create(ctx.Context, createInput); err != nil {
 				return fmt.Errorf("creating microvm: %s", err)
 			}
