@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	flintlockv1 "github.com/weaveworks/flintlock/api/services/microvm/v1alpha1"
+	flintlockv1 "github.com/weaveworks-liquidmetal/flintlock/api/services/microvm/v1alpha1"
 )
 
 func (a *app) Delete(ctx context.Context, input *DeleteInput) error {

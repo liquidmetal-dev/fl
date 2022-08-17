@@ -11,9 +11,9 @@ import (
 	"github.com/yitsushi/macpot"
 	"gopkg.in/yaml.v2"
 
-	flintlockv1 "github.com/weaveworks/flintlock/api/services/microvm/v1alpha1"
-	flintlocktypes "github.com/weaveworks/flintlock/api/types"
-	"github.com/weaveworks/flintlock/client/cloudinit/userdata"
+	flintlockv1 "github.com/weaveworks-liquidmetal/flintlock/api/services/microvm/v1alpha1"
+	flintlocktypes "github.com/weaveworks-liquidmetal/flintlock/api/types"
+	"github.com/weaveworks-liquidmetal/flintlock/client/cloudinit/userdata"
 )
 
 func (a *app) Create(ctx context.Context, input *CreateInput) error {
@@ -58,7 +58,7 @@ func (a *app) addUserdata(spec *flintlocktypes.MicroVMSpec, input *CreateInput) 
 	if err != nil {
 		return fmt.Errorf("creating user-data for microvm: %w", err)
 	}
-	spec.Metadata["user-data"] = userData
+	spec.Metadata.Items["user-data"] = userData
 
 	return nil
 }
@@ -82,12 +82,14 @@ func (a *app) convertCreateInputToReq(input *CreateInput) (*flintlocktypes.Micro
 		RootVolume: &flintlocktypes.Volume{
 			Id:         "root",
 			IsReadOnly: false,
-			MountPoint: "/",
 			Source: &flintlocktypes.VolumeSource{
 				ContainerSource: &input.RootImage,
 			},
 		},
-		Metadata:          make(map[string]string),
+		Metadata: &flintlocktypes.Metadata{
+			Items:     make(map[string]string),
+			AddVolume: &input.MetadataAddVolume,
+		},
 		AdditionalVolumes: []*flintlocktypes.Volume{},
 		Interfaces:        []*flintlocktypes.NetworkInterface{},
 	}
@@ -110,7 +112,8 @@ func (a *app) convertCreateInputToReq(input *CreateInput) (*flintlocktypes.Micro
 		if err != nil {
 			return nil, fmt.Errorf("reading metadata from file %s: %w", metaparts[1], err)
 		}
-		req.Metadata[metaparts[0]] = string(content)
+		encoded := base64.StdEncoding.EncodeToString(content)
+		req.Metadata.Items[metaparts[0]] = encoded
 	}
 
 	for i := range input.NetworkInterfaces {
@@ -182,6 +185,7 @@ func (a *app) createUserData(metadata Metadata) (string, error) {
 			"ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf",
 		}
 	}
+	//userMetadata.BootCommands = append(userMetadata.BootCommands, "ip route add 169.254.169.254 dev eth0")
 
 	if metadata.Hostname != "" {
 		userMetadata.HostName = metadata.Hostname

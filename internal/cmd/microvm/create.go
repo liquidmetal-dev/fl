@@ -151,6 +151,12 @@ func newCreateCommand() *cli.Command {
 				Usage:       "set the cloud-init final message",
 				Destination: &createInput.Metadata.Message,
 			},
+			&cli.BoolFlag{
+				Name:        "metadata-add-volume",
+				Usage:       "add the metadata as a volume to the microvm",
+				Destination: &createInput.MetadataAddVolume,
+				Value:       false,
+			},
 		},
 	}
 

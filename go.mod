@@ -2,11 +2,16 @@ module github.com/weaveworks-liquidmetal/fl
 
 go 1.17
 
+replace (
+	github.com/weaveworks-liquidmetal/flintlock/api => ../flintlock/api
+	github.com/weaveworks-liquidmetal/flintlock/client => ../flintlock/client
+)
+
 require (
 	github.com/moby/moby v20.10.14+incompatible
 	github.com/urfave/cli/v2 v2.4.0
-	github.com/weaveworks/flintlock/api v0.0.0-20220304105853-8fcb8aa2bafb
-	github.com/weaveworks/flintlock/client v0.0.0-20220304105853-8fcb8aa2bafb
+	github.com/weaveworks-liquidmetal/flintlock/api v0.0.0-20220722132608-982d429ba641
+	github.com/weaveworks-liquidmetal/flintlock/client v0.0.0-20220304105853-8fcb8aa2bafb
 	github.com/yitsushi/macpot v1.0.2
 	go.uber.org/zap v1.21.0
 	google.golang.org/grpc v1.45.0
