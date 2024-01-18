@@ -1,4 +1,4 @@
-module github.com/weaveworks-liquidmetal/fl
+module github.com/liquidmetal-dev/fl
 
 go 1.17
 
