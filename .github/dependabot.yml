@@ -1,0 +1,28 @@
+version: 2
+updates:
+
+  # Main Go module
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels:
+      - "kind/cleanup"
+      - "area/dependency"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "kind/cleanup"
+      - "area/build-and-release"
+
+  - package-ecosystem: "devcontainers"
+    directory: "/"
+    schedule:
+      interval: weekly

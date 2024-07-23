@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/weaveworks-liquidmetal/fl/internal/cmd"
+	"github.com/liquidmetal-dev/fl/internal/cmd"
 )
 
 func main() {

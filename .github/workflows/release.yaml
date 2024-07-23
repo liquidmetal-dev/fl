@@ -13,15 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Setup Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
-          go-version: 1.17.x
-      - name: Setup Syft
-        uses: anchore/sbom-action/download-syft@v0
+          go-version: 1.22.x
       - name: Generate release notes
         run: |
           gh api repos/{owner}/{repo}/releases/generate-notes -F tag_name=${{ github.ref }} --jq .body > ./changelog.md
@@ -30,7 +28,7 @@ jobs:
           OWNER: ${{ github.repository_owner }}
           REPO: ${{ github.event.repository.name }}
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v1
+        uses: goreleaser/goreleaser-action@v4
         with:
           version: latest
           args: release --release-notes=./changelog.md --skip-validate
