@@ -31,6 +31,6 @@ jobs:
         uses: goreleaser/goreleaser-action@v4
         with:
           version: latest
-          args: release --release-notes=./changelog.md --skip-validate
+          args: release --release-notes=./changelog.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
