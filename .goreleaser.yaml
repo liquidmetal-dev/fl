@@ -1,26 +1,31 @@
+version: 2
+
 before:
   hooks:
-    - go mod tidy -compat=1.17
+    - go mod tidy
     - go mod download
+
 builds:
   - env:
       - CGO_ENABLED=0
-    main: .
     goos:
       - linux
       - darwin
-    goarch:
-      - amd64
-      - arm64
+
 archives:
-  - replacements:
-      darwin: Darwin
-      linux: Linux
-      windows: Windows
-      386: i386
-      amd64: x86_64
-sboms:
-  - artifacts: archive
+  - format: tar.gz
+    # this name template makes the OS and Arch compatible with the results of `uname`.
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    # use zip for windows archives
+    format_overrides:
+      - goos: windows
+        format: zip
 checksum:
   name_template: 'checksums.txt'
 snapshot:
@@ -32,5 +37,5 @@ changelog:
   sort: asc
   filters:
     exclude:
-      - '^docs:'
-      - '^test:'
+      - "^docs:"
+      - "^test:"

@@ -1,6 +1,6 @@
-module github.com/weaveworks-liquidmetal/fl
+module github.com/liquidmetal-dev/fl
 
-go 1.17
+go 1.22
 
 require (
 	github.com/moby/moby v20.10.14+incompatible

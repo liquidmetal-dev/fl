@@ -7,7 +7,7 @@ import (
 	"github.com/urfave/cli/v2"
 	"go.uber.org/zap"
 
-	"github.com/weaveworks-liquidmetal/fl/pkg/app"
+	"github.com/liquidmetal-dev/fl/pkg/app"
 )
 
 const (
@@ -154,8 +154,8 @@ func newCreateCommand() *cli.Command {
 		},
 	}
 
-	//TODO: additional command line args for kernel
-	//TODO: add additional volumes
+	// TODO: additional command line args for kernel
+	// TODO: add additional volumes
 
 	return cmd
 }
