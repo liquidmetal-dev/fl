@@ -16,6 +16,7 @@ type CreateInput struct {
 	NetworkInterfaces []string
 	MetadataFromFile  []string
 	Metadata          Metadata
+	Volumes           []string
 }
 
 type Metadata struct {
