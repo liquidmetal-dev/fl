@@ -63,7 +63,7 @@ func (a *app) addUserdata(spec *flintlocktypes.MicroVMSpec, input *CreateInput) 
 	return nil
 }
 
-//TODO: this whole thing needs rewriting
+// TODO: this whole thing needs rewriting
 func (a *app) convertCreateInputToReq(input *CreateInput) (*flintlocktypes.MicroVMSpec, error) {
 	req := &flintlocktypes.MicroVMSpec{
 		Id:        input.Name,
@@ -77,7 +77,7 @@ func (a *app) convertCreateInputToReq(input *CreateInput) (*flintlocktypes.Micro
 			Image:            input.KernelImage,
 			AddNetworkConfig: input.KernelAddNetConf,
 			Filename:         &input.KernelFileName,
-			//TODO: additional args
+			// TODO: additional args
 		},
 		RootVolume: &flintlocktypes.Volume{
 			Id:         "root",
@@ -103,7 +103,7 @@ func (a *app) convertCreateInputToReq(input *CreateInput) (*flintlocktypes.Micro
 		metaFromFile := input.MetadataFromFile[i]
 		metaparts := strings.Split(metaFromFile, "=")
 		if len(metaparts) != 2 {
-			//TODO: proper error
+			// TODO: proper error
 			return nil, fmt.Errorf("metadata not in name=pathtofile format")
 		}
 		content, err := os.ReadFile(metaparts[1])
@@ -117,14 +117,14 @@ func (a *app) convertCreateInputToReq(input *CreateInput) (*flintlocktypes.Micro
 		netInt := input.NetworkInterfaces[i]
 		netParts := strings.Split(netInt, ":")
 		if len(netParts) < 1 || len(netParts) > 4 {
-			//TODO: proper error
+			// TODO: proper error
 			return nil, fmt.Errorf("network interfaces not in correct format, expect name:type:[macaddress]:[ipaddress]")
 		}
 
 		macAddress := ""
 		ipAddress := ""
 		name := netParts[0]
-		intType := netParts[1] //TODO: validate the types
+		intType := netParts[1] // TODO: validate the types
 
 		if name == "eth0" {
 			return nil, fmt.Errorf("you cannot use eth0 as the name of the interface as this is reserved")
@@ -163,6 +163,25 @@ func (a *app) convertCreateInputToReq(input *CreateInput) (*flintlocktypes.Micro
 		}
 
 		req.Interfaces = append(req.Interfaces, apiIface)
+	}
+
+	for i := range input.Volumes {
+		volume := input.Volumes[i]
+		volParts := strings.Split(volume, "=")
+		if len(volParts) != 3 {
+			// TODO: proper error
+			return nil, fmt.Errorf("volume not in correct format, expect name=containerimage=mountpoint")
+		}
+
+		apiVolume := &flintlocktypes.Volume{
+			Id:         volParts[0],
+			IsReadOnly: false,
+			MountPoint: volParts[2],
+			Source: &flintlocktypes.VolumeSource{
+				ContainerSource: &volParts[1],
+			},
+		}
+		req.AdditionalVolumes = append(req.AdditionalVolumes, apiVolume)
 	}
 
 	return req, nil

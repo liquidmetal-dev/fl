@@ -23,6 +23,7 @@ func newCreateCommand() *cli.Command {
 	createInput := &app.CreateInput{}
 	networkInterfaces := &cli.StringSlice{}
 	metadataFromFile := &cli.StringSlice{}
+	volumes := &cli.StringSlice{}
 
 	cmd := &cli.Command{
 		Name:  "create",
@@ -43,6 +44,7 @@ func newCreateCommand() *cli.Command {
 
 			createInput.NetworkInterfaces = networkInterfaces.Value()
 			createInput.MetadataFromFile = metadataFromFile.Value()
+			createInput.Volumes = volumes.Value()
 
 			if err := a.Create(ctx.Context, createInput); err != nil {
 				return fmt.Errorf("creating microvm: %s", err)
@@ -150,6 +152,11 @@ func newCreateCommand() *cli.Command {
 				Name:        "metadata-final-message",
 				Usage:       "set the cloud-init final message",
 				Destination: &createInput.Metadata.Message,
+			},
+			&cli.StringSliceFlag{
+				Name:        "volume",
+				Usage:       "attach an additional volume, The following format: name=containerimage=mountpoint",
+				Destination: volumes,
 			},
 		},
 	}
