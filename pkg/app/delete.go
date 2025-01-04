@@ -27,5 +27,4 @@ func (a *app) Delete(ctx context.Context, input *DeleteInput) error {
 	a.logger.Infow("deleted microvm", "uid", input.UID, "host", input.Host)
 
 	return nil
-
 }

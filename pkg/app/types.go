@@ -1,22 +1,23 @@
 package app
 
 type CreateInput struct {
-	Host              string
-	Name              string
-	NameAutogenerate  bool
-	Namespace         string
-	VCPU              int
-	MemoryInMb        int
-	KernelImage       string
-	KernelAddNetConf  bool
-	KernelFileName    string
-	RootImage         string
-	InitrdImage       string
-	InitrdFilename    string
-	NetworkInterfaces []string
-	MetadataFromFile  []string
-	Metadata          Metadata
-	Volumes           []string
+	Host                       string
+	Name                       string
+	NameAutogenerate           bool
+	Namespace                  string
+	VCPU                       int
+	MemoryInMb                 int
+	KernelImage                string
+	KernelAddNetConf           bool
+	KernelFileName             string
+	RootImage                  string
+	InitrdImage                string
+	InitrdFilename             string
+	NetworkInterfaces          []string
+	MetadataFromFile           []string
+	Metadata                   Metadata
+	AdditionalContainerVolumes []string
+	AdditionalVirtioFSVolume   string
 }
 
 type Metadata struct {

@@ -1,6 +1,13 @@
 module github.com/liquidmetal-dev/fl
 
-go 1.22
+go 1.23
+
+toolchain go1.23.4
+
+replace (
+	github.com/liquidmetal-dev/flintlock/api => ../flintlock/api
+	github.com/liquidmetal-dev/flintlock/client => ../flintlock/client
+)
 
 require (
 	github.com/liquidmetal-dev/flintlock/api v0.0.0-20241227150005-3cc8809bcb11
