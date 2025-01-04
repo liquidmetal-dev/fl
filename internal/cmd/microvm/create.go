@@ -14,9 +14,9 @@ const (
 	defaultNamespace   = "default"
 	defaultVCPU        = 2
 	defaultMemoryMb    = 2048
-	defaultKernelImage = "ghcr.io/weaveworks/flintlock-kernel:5.10.77"
-	defaultKernelFile  = "boot/vmlinux"
-	defaultRootImage   = "ghcr.io/weaveworks/capmvm-kubernetes:1.21.8"
+	defaultKernelImage = "ghcr.io/liquidmetal-dev/firecracker-kernel-k8s:6.1"
+	defaultKernelFile  = "vmlinux"
+	defaultRootImage   = "ghcr.io/liquidmetal-dev/ubuntu:22.04"
 )
 
 func newCreateCommand() *cli.Command {

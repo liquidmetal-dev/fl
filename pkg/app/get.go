@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	flintlockv1 "github.com/weaveworks/flintlock/api/services/microvm/v1alpha1"
+	flintlockv1 "github.com/liquidmetal-dev/flintlock/api/services/microvm/v1alpha1"
 	"gopkg.in/yaml.v2"
 )
 

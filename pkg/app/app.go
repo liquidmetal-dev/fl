@@ -8,7 +8,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	flintlockv1 "github.com/weaveworks/flintlock/api/services/microvm/v1alpha1"
+	flintlockv1 "github.com/liquidmetal-dev/flintlock/api/services/microvm/v1alpha1"
 )
 
 type App interface {

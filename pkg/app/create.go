@@ -11,9 +11,9 @@ import (
 	"github.com/yitsushi/macpot"
 	"gopkg.in/yaml.v2"
 
-	flintlockv1 "github.com/weaveworks/flintlock/api/services/microvm/v1alpha1"
-	flintlocktypes "github.com/weaveworks/flintlock/api/types"
-	"github.com/weaveworks/flintlock/client/cloudinit/userdata"
+	flintlockv1 "github.com/liquidmetal-dev/flintlock/api/services/microvm/v1alpha1"
+	flintlocktypes "github.com/liquidmetal-dev/flintlock/api/types"
+	"github.com/liquidmetal-dev/flintlock/client/cloudinit/userdata"
 )
 
 func (a *app) Create(ctx context.Context, input *CreateInput) error {
@@ -65,6 +65,7 @@ func (a *app) addUserdata(spec *flintlocktypes.MicroVMSpec, input *CreateInput) 
 
 // TODO: this whole thing needs rewriting
 func (a *app) convertCreateInputToReq(input *CreateInput) (*flintlocktypes.MicroVMSpec, error) {
+	rootMountPoint := "/"
 	req := &flintlocktypes.MicroVMSpec{
 		Id:        input.Name,
 		Namespace: input.Namespace,
@@ -82,7 +83,7 @@ func (a *app) convertCreateInputToReq(input *CreateInput) (*flintlocktypes.Micro
 		RootVolume: &flintlocktypes.Volume{
 			Id:         "root",
 			IsReadOnly: false,
-			MountPoint: "/",
+			MountPoint: &rootMountPoint,
 			Source: &flintlocktypes.VolumeSource{
 				ContainerSource: &input.RootImage,
 			},
@@ -176,7 +177,7 @@ func (a *app) convertCreateInputToReq(input *CreateInput) (*flintlocktypes.Micro
 		apiVolume := &flintlocktypes.Volume{
 			Id:         volParts[0],
 			IsReadOnly: false,
-			MountPoint: volParts[2],
+			MountPoint: &volParts[2],
 			Source: &flintlocktypes.VolumeSource{
 				ContainerSource: &volParts[1],
 			},
