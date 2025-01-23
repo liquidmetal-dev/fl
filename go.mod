@@ -5,11 +5,11 @@ go 1.22
 require (
 	github.com/liquidmetal-dev/flintlock/api v0.0.0-20241227150005-3cc8809bcb11
 	github.com/liquidmetal-dev/flintlock/client v0.0.0-20241227150005-3cc8809bcb11
-	github.com/moby/moby v27.4.1+incompatible
+	github.com/moby/moby v27.5.1+incompatible
 	github.com/urfave/cli/v2 v2.27.5
 	github.com/yitsushi/macpot v1.0.3
 	go.uber.org/zap v1.27.0
-	google.golang.org/grpc v1.69.2
+	google.golang.org/grpc v1.69.4
 	gopkg.in/yaml.v2 v2.4.0
 )
 
