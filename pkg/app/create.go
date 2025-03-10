@@ -16,6 +16,8 @@ import (
 	"github.com/liquidmetal-dev/flintlock/client/cloudinit/userdata"
 )
 
+var rootVolume = "/"
+
 func (a *app) Create(ctx context.Context, input *CreateInput) error {
 	a.logger.Debug("creating a microvm")
 
@@ -166,8 +168,8 @@ func (a *app) convertCreateInputToReq(input *CreateInput) (*flintlocktypes.Micro
 		req.Interfaces = append(req.Interfaces, apiIface)
 	}
 
-	for i := range input.Volumes {
-		volume := input.Volumes[i]
+	for i := range input.AdditionalContainerVolumes {
+		volume := input.AdditionalContainerVolumes[i]
 		volParts := strings.Split(volume, "=")
 		if len(volParts) != 3 {
 			// TODO: proper error
@@ -180,6 +182,23 @@ func (a *app) convertCreateInputToReq(input *CreateInput) (*flintlocktypes.Micro
 			MountPoint: &volParts[2],
 			Source: &flintlocktypes.VolumeSource{
 				ContainerSource: &volParts[1],
+			},
+		}
+		req.AdditionalVolumes = append(req.AdditionalVolumes, apiVolume)
+	}
+	if input.AdditionalVirtioFSVolume != "" {
+		volParts := strings.Split(input.AdditionalVirtioFSVolume, "=")
+		if len(volParts) != 3 {
+			// TODO: proper error
+			return nil, fmt.Errorf("volume not in correct format, expect name=localpath=mountpoint")
+		}
+
+		apiVolume := &flintlocktypes.Volume{
+			Id:         volParts[0],
+			IsReadOnly: false,
+			MountPoint: &volParts[2],
+			Source: &flintlocktypes.VolumeSource{
+				VirtiofsSource: &volParts[1],
 			},
 		}
 		req.AdditionalVolumes = append(req.AdditionalVolumes, apiVolume)

@@ -23,7 +23,7 @@ func newCreateCommand() *cli.Command {
 	createInput := &app.CreateInput{}
 	networkInterfaces := &cli.StringSlice{}
 	metadataFromFile := &cli.StringSlice{}
-	volumes := &cli.StringSlice{}
+	containerVolumes := &cli.StringSlice{}
 
 	cmd := &cli.Command{
 		Name:  "create",
@@ -44,7 +44,7 @@ func newCreateCommand() *cli.Command {
 
 			createInput.NetworkInterfaces = networkInterfaces.Value()
 			createInput.MetadataFromFile = metadataFromFile.Value()
-			createInput.Volumes = volumes.Value()
+			createInput.AdditionalContainerVolumes = containerVolumes.Value()
 
 			if err := a.Create(ctx.Context, createInput); err != nil {
 				return fmt.Errorf("creating microvm: %s", err)
@@ -154,9 +154,14 @@ func newCreateCommand() *cli.Command {
 				Destination: &createInput.Metadata.Message,
 			},
 			&cli.StringSliceFlag{
-				Name:        "volume",
-				Usage:       "attach an additional volume, The following format: name=containerimage=mountpoint",
-				Destination: volumes,
+				Name:        "container-volume",
+				Usage:       "attach additional volumes using a container image, The following format: name=containerimage=mountpoint",
+				Destination: containerVolumes,
+			},
+			&cli.StringFlag{
+				Name:        "virtiofs-volume",
+				Usage:       "attach an additional volume using virtiofs, use the following format: name=localpath=mountpoint",
+				Destination: &createInput.AdditionalVirtioFSVolume,
 			},
 		},
 	}
