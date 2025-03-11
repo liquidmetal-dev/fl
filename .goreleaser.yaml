@@ -11,31 +11,32 @@ builds:
     goos:
       - linux
       - darwin
+      - windows
 
 archives:
-  - format: tar.gz
-    # this name template makes the OS and Arch compatible with the results of `uname`.
-    name_template: >-
-      {{ .ProjectName }}_
-      {{- title .Os }}_
-      {{- if eq .Arch "amd64" }}x86_64
-      {{- else if eq .Arch "386" }}i386
-      {{- else }}{{ .Arch }}{{ end }}
-      {{- if .Arm }}v{{ .Arm }}{{ end }}
-    # use zip for windows archives
-    format_overrides:
+  - format_overrides:
       - goos: windows
-        format: zip
+        formats: ["zip"]
+
 checksum:
-  name_template: 'checksums.txt'
-snapshot:
-  name_template: "{{ incpatch .Version }}-next"
+  name_template: "checksums.txt"
+
 release:
   draft: true
   prerelease: auto
+
 changelog:
   sort: asc
   filters:
     exclude:
       - "^docs:"
       - "^test:"
+
+nfpms:
+  - maintainer: Richard Case <richard@liquidmetal.dev>
+    vendor: Liquid Metal Project
+    homepage: https://liquidmetal.dev/
+    formats:
+      - apk
+      - deb
+      - rpm

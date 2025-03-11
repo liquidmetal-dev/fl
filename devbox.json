@@ -1,12 +1,13 @@
 {
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.6/.schema/devbox.schema.json",
   "packages": [
-    "go@1.22.9"
+    "go@1.22.9",
+    "goreleaser@latest"
   ],
   "shell": {
     "env": {
       "GOPATH": "$HOME/go/",
-      "PATH": "$PATH:$HOME/go/bin"
+      "PATH":   "$PATH:$HOME/go/bin"
     },
     "init_hook": [
       "export \"GOROOT=$(go env GOROOT)\""
