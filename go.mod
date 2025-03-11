@@ -4,14 +4,9 @@ go 1.23
 
 toolchain go1.23.4
 
-replace (
-	github.com/liquidmetal-dev/flintlock/api => ../flintlock/api
-	github.com/liquidmetal-dev/flintlock/client => ../flintlock/client
-)
-
 require (
-	github.com/liquidmetal-dev/flintlock/api v0.0.0-20241227150005-3cc8809bcb11
-	github.com/liquidmetal-dev/flintlock/client v0.0.0-20241227150005-3cc8809bcb11
+	github.com/liquidmetal-dev/flintlock/api v0.0.0-20250217152353-bad227d30da4
+	github.com/liquidmetal-dev/flintlock/client v0.0.0-20250217152353-bad227d30da4
 	github.com/moby/moby v27.4.1+incompatible
 	github.com/urfave/cli/v2 v2.27.5
 	github.com/yitsushi/macpot v1.0.3
