@@ -30,11 +30,11 @@ func newCreateCommand() *cli.Command {
 		Usage: "create a new microvm",
 		Before: func(ctx *cli.Context) error {
 			if createInput.Name != "" && createInput.NameAutogenerate {
-				return errors.New("only one of --name or --name-autoegenarate can be specified")
+				return errors.New("only one of --name or --name-autogenerate can be specified")
 			}
 
 			if createInput.Name == "" && !createInput.NameAutogenerate {
-				return errors.New("you must supply one of --name or --name-autoegenarate")
+				return errors.New("you must supply one of --name or --name-autogenerate")
 			}
 
 			return nil
