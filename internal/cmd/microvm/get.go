@@ -3,7 +3,7 @@ package microvm
 import (
 	"fmt"
 
-	"github.com/urfave/cli/v2"
+	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 
 	"github.com/liquidmetal-dev/fl/pkg/app"
@@ -19,40 +19,32 @@ fl microvm get --host host1:9090 01FZZJV1XD2FKH2KY0NDB4MBRQ
 `
 )
 
-func newGetCommand() *cli.Command {
+func newGetCommand() *cobra.Command {
 	getInput := &app.GetInput{}
 
-	cmd := &cli.Command{
-		Name:  "get",
-		Usage: "get details of a microvm(s) from a host",
-		Action: func(ctx *cli.Context) error {
-			if ctx.Args().Len() > 0 {
-				getInput.UID = ctx.Args().First()
+	cmd := &cobra.Command{
+		Use:   "get [vmid]",
+		Short: "get details of a microvm(s) from a host",
+		Args:  cobra.ArbitraryArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if len(args) > 0 {
+				getInput.UID = args[0]
 			}
 
 			a := app.New(zap.S().With("action", "get"))
-			err := a.Get(ctx.Context, getInput)
+			err := a.Get(cmd.Context(), getInput)
 			if err != nil {
 				return fmt.Errorf("getting microvnm: %w", err)
 			}
 
 			return nil
 		},
-		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name:        "host",
-				Usage:       "the flintlock host to get the microvm from",
-				Destination: &getInput.Host,
-				Required:    true,
-			},
-			&cli.StringFlag{
-				Name:        "namespace",
-				Usage:       "the namespace to get the microvms from",
-				Destination: &getInput.Namespace,
-				Value:       defaultNamespace,
-			},
-		},
 	}
+
+	cmd.Flags().StringVar(&getInput.Host, "host", "", "the flintlock host to create the microvm on")
+	cmd.Flags().StringVar(&getInput.Namespace, "namespace", defaultNamespace, "the namespace for the microvm")
+
+	cmd.MarkFlagRequired("host")
 
 	return cmd
 }

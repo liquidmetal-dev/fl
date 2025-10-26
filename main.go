@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"math/rand"
-	"os"
 	"time"
 
 	"github.com/liquidmetal-dev/fl/internal/cmd"
@@ -14,8 +13,8 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 	ctx := context.Background()
 
-	app := cmd.NewApp()
-	if err := app.RunContext(ctx, os.Args); err != nil {
+	rootCmd := cmd.NewRootCmd()
+	if err := rootCmd.ExecuteContext(ctx); err != nil {
 		log.Fatalf("failed executing root command: %s", err)
 	}
 }

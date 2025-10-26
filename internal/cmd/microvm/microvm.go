@@ -1,22 +1,21 @@
 package microvm
 
 import (
-	"github.com/urfave/cli/v2"
+	"github.com/spf13/cobra"
 )
 
-func NewCommand() *cli.Command {
-	cmd := &cli.Command{
-		Name:        "microvm",
-		Usage:       "perform microvm operations",
-		Subcommands: []*cli.Command{},
+func NewCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "microvm",
+		Short: "perform microvm operations",
+		Run: func(cmd *cobra.Command, args []string) {
+			cmd.Help()
+		},
 	}
 
-	subCommands := []*cli.Command{
-		newCreateCommand(),
-		newGetCommand(),
-		newDeleteCommand(),
-	}
-	cmd.Subcommands = append(cmd.Subcommands, subCommands...)
+	cmd.AddCommand(newCreateCommand())
+	cmd.AddCommand(newGetCommand())
+	cmd.AddCommand(newDeleteCommand())
 
 	return cmd
 }
