@@ -21,10 +21,11 @@ type CreateInput struct {
 }
 
 type Metadata struct {
-	Hostname   string
-	SSHKeyFile string
-	ResolvdFix bool
-	Message    string
+	Hostname     string
+	SSHKeyFile   string
+	ResolvdFix   bool
+	Message      string
+	SshImportIds []string
 }
 
 func (m Metadata) IsEmpty() bool {
@@ -38,6 +39,9 @@ func (m Metadata) IsEmpty() bool {
 		return false
 	}
 	if m.ResolvdFix {
+		return false
+	}
+	if len(m.SshImportIds) > 0 {
 		return false
 	}
 

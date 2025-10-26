@@ -226,12 +226,7 @@ func (a *app) createUserData(metadata Metadata) (string, error) {
 		userMetadata.HostName = metadata.Hostname
 	}
 
-	if metadata.SSHKeyFile != "" {
-		data, err := os.ReadFile(metadata.SSHKeyFile)
-		if err != nil {
-			return "", fmt.Errorf("reading ssh key file %s: %w", metadata.SSHKeyFile, err)
-		}
-		sshKey := string(data)
+	if metadata.SSHKeyFile != "" || len(metadata.SshImportIds) > 0 {
 
 		defaultUser := userdata.User{
 			Name: "ubuntu",
@@ -240,11 +235,23 @@ func (a *app) createUserData(metadata Metadata) (string, error) {
 			Name: "root",
 		}
 
-		defaultUser.SSHAuthorizedKeys = []string{
-			sshKey,
+		if metadata.SSHKeyFile != "" {
+			data, err := os.ReadFile(metadata.SSHKeyFile)
+			if err != nil {
+				return "", fmt.Errorf("reading ssh key file %s: %w", metadata.SSHKeyFile, err)
+			}
+			sshKey := string(data)
+
+			defaultUser.SSHAuthorizedKeys = []string{
+				sshKey,
+			}
+			rootUser.SSHAuthorizedKeys = []string{
+				sshKey,
+			}
 		}
-		rootUser.SSHAuthorizedKeys = []string{
-			sshKey,
+		if len(metadata.SshImportIds) > 0 {
+			defaultUser.SSHImportIds = metadata.SshImportIds
+			rootUser.SSHImportIds = metadata.SshImportIds
 		}
 
 		userMetadata.Users = []userdata.User{defaultUser, rootUser}
