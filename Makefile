@@ -1,5 +1,9 @@
 
 
+.PHONY: install-tools
+install-tools:  ## Install pinned tool versions via mise
+	mise install
+
 .PHONY: build
-build:  ## Build the binaries
-	goreleaser release --snapshot --clean
+build: install-tools  ## Build the binaries
+	mise exec -- goreleaser release --snapshot --clean
