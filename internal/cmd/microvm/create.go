@@ -27,11 +27,11 @@ func newCreateCommand() *cobra.Command {
 		Short: "create a new microvm",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			if createInput.Name != "" && createInput.NameAutogenerate {
-				return errors.New("only one of --name or --name-autoegenarate can be specified")
+				return errors.New("only one of --name or --name-autogenerate can be specified")
 			}
 
 			if createInput.Name == "" && !createInput.NameAutogenerate {
-				return errors.New("you must supply one of --name or --name-autoegenarate")
+				return errors.New("you must supply one of --name or --name-autogenerate")
 			}
 
 			return nil
