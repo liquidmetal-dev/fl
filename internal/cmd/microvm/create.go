@@ -61,7 +61,7 @@ func newCreateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&createInput.RootImage, "root-image", defaultRootImage, "the image to use for the root volume")
 	cmd.Flags().StringVar(&createInput.InitrdImage, "initrd-image", "", "the image to use for the initial ramdisk")
 	cmd.Flags().StringVar(&createInput.InitrdFilename, "initrd-filename", "", "name of the file in the image to use for the initial ramdisk")
-	cmd.Flags().StringSliceVar(&createInput.NetworkInterfaces, "network-interface", []string{}, "specify the network interfaces to attach. In the following format: name:type:[macaddress]:[ipaddress]")
+	cmd.Flags().StringSliceVar(&createInput.NetworkInterfaces, "network-interface", []string{}, "specify the network interfaces to attach. In the following format: name:type:[macaddress]:[ipaddress]:[bridgename]")
 	cmd.Flags().StringSliceVar(&createInput.MetadataFromFile, "metadata-from-file", []string{}, "specify metadata to be available to your microvm. In the following format key=pathtofile")
 	cmd.Flags().StringVar(&createInput.Metadata.Hostname, "metadata-hostname", "", "the hostname of the the microvm")
 	cmd.Flags().StringVar(&createInput.Metadata.SSHKeyFile, "metadata-ssh-key-file", "", "an ssh key to use")
