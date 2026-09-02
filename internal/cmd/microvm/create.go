@@ -70,6 +70,7 @@ func newCreateCommand() *cobra.Command {
 	cmd.Flags().StringVar(&createInput.Metadata.Message, "metadata-final-message", "", "set the cloud-init final message")
 	cmd.Flags().StringSliceVar(&createInput.AdditionalContainerVolumes, "container-volume", []string{}, "attach additional volumes using a container image, The following format: name=containerimage=mountpoint")
 	cmd.Flags().StringVar(&createInput.AdditionalVirtioFSVolume, "virtiofs-volume", "", "attach an additional volume using virtiofs, use the following format: name=localpath=mountpoint")
+	cmd.Flags().BoolVar(&createInput.AllowGuestAgent, "allow-guest-agent", false, "attach a vsock device so the in-guest guest-agent can communicate with the host")
 
 	// TODO: additional command line args for kernel
 	// TODO: add additional volumes

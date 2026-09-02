@@ -18,6 +18,7 @@ type CreateInput struct {
 	Metadata                   Metadata
 	AdditionalContainerVolumes []string
 	AdditionalVirtioFSVolume   string
+	AllowGuestAgent            bool
 }
 
 type Metadata struct {
