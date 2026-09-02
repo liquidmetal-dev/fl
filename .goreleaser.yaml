@@ -14,7 +14,13 @@ builds:
       - windows
 
 archives:
-  - format_overrides:
+  - name_template: >-
+      {{ .Binary }}_
+      {{- .Os }}_
+      {{- .Arch }}
+      {{- with .Arm }}v{{ . }}{{ end }}
+      {{- with .Mips }}_{{ . }}{{ end }}
+    format_overrides:
       - goos: windows
         formats: ["zip"]
 
@@ -36,6 +42,7 @@ nfpms:
   - maintainer: Richard Case <richard@liquidmetal.dev>
     vendor: Liquid Metal Project
     homepage: https://liquidmetal.dev/
+    file_name_template: "{{ .PackageName }}_{{ .Os }}_{{ .Arch }}"
     formats:
       - apk
       - deb
