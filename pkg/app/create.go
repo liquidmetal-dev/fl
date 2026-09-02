@@ -120,13 +120,14 @@ func (a *app) convertCreateInputToReq(input *CreateInput) (*flintlocktypes.Micro
 	for i := range input.NetworkInterfaces {
 		netInt := input.NetworkInterfaces[i]
 		netParts := strings.Split(netInt, ":")
-		if len(netParts) < 1 || len(netParts) > 4 {
+		if len(netParts) < 1 || len(netParts) > 5 {
 			// TODO: proper error
-			return nil, fmt.Errorf("network interfaces not in correct format, expect name:type:[macaddress]:[ipaddress]")
+			return nil, fmt.Errorf("network interfaces not in correct format, expect name:type:[macaddress]:[ipaddress]:[bridgename]")
 		}
 
 		macAddress := ""
 		ipAddress := ""
+		bridgeName := ""
 		name := netParts[0]
 		intType := netParts[1] // TODO: validate the types
 
@@ -134,11 +135,14 @@ func (a *app) convertCreateInputToReq(input *CreateInput) (*flintlocktypes.Micro
 			return nil, fmt.Errorf("you cannot use eth0 as the name of the interface as this is reserved")
 		}
 
-		if len(netParts) == 3 {
+		if len(netParts) >= 3 {
 			macAddress = netParts[2]
 		}
-		if len(netParts) == 4 {
+		if len(netParts) >= 4 {
 			ipAddress = netParts[3]
+		}
+		if len(netParts) == 5 {
+			bridgeName = netParts[4]
 		}
 		if macAddress == "" {
 			mac, err := macpot.New(macpot.AsLocal(), macpot.AsUnicast())
@@ -156,6 +160,12 @@ func (a *app) convertCreateInputToReq(input *CreateInput) (*flintlocktypes.Micro
 		if ipAddress != "" {
 			apiIface.Address = &flintlocktypes.StaticAddress{
 				Address: ipAddress,
+			}
+		}
+
+		if bridgeName != "" {
+			apiIface.Overrides = &flintlocktypes.NetworkOverrides{
+				BridgeName: &bridgeName,
 			}
 		}
 
