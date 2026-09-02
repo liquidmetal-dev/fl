@@ -5,8 +5,8 @@ go 1.23
 toolchain go1.23.4
 
 require (
-	github.com/liquidmetal-dev/flintlock/api v0.0.0-20250217152353-bad227d30da4
-	github.com/liquidmetal-dev/flintlock/client v0.0.0-20251026183057-22744608d206
+	github.com/liquidmetal-dev/flintlock/api v0.0.0-20260902092113-b8bafd6059ae
+	github.com/liquidmetal-dev/flintlock/client v0.0.0-20260902092113-b8bafd6059ae
 	github.com/moby/moby v27.4.1+incompatible
 	github.com/spf13/cobra v1.10.1
 	github.com/yitsushi/macpot v1.0.3

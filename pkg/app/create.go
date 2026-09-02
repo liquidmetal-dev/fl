@@ -74,8 +74,9 @@ func (a *app) convertCreateInputToReq(input *CreateInput) (*flintlocktypes.Micro
 		Labels: map[string]string{
 			"created-with": "fl",
 		},
-		Vcpu:       int32(input.VCPU),
-		MemoryInMb: int32(input.MemoryInMb),
+		Vcpu:            int32(input.VCPU),
+		MemoryInMb:      int32(input.MemoryInMb),
+		AllowGuestAgent: input.AllowGuestAgent,
 		Kernel: &flintlocktypes.Kernel{
 			Image:            input.KernelImage,
 			AddNetworkConfig: input.KernelAddNetConf,
