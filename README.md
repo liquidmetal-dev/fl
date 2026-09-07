@@ -53,6 +53,24 @@ fl microvm delete --host <flintlock-host:port> <vmid>
 
 Deletes a microVM from a host.
 
+```sh
+fl microvm exec --host <flintlock-host:port> <vmid> -- <cmd> [args...]
+```
+
+Runs a command inside a microVM's guest via the flintlock guest-agent. Requires the microVM to have been created
+with `--allow-guest-agent` and the flintlock server to have exec enabled. See `fl microvm exec --help` for the
+full set of flags (working directory, environment variables, running as a specific user, timeouts, forwarding
+stdin with `-i`/`--stdin`).
+
+```sh
+fl microvm ssh --host <flintlock-host:port> <vmid> [-- ssh-args...]
+```
+
+Opens an SSH session to a microVM's guest, tunnelled through flintlock's ssh-proxy guest-agent service. Requires
+the microVM to have been created with `--allow-guest-agent` and the flintlock server to have ssh proxying
+enabled. Any extra arguments after `--` are passed through to the underlying `ssh` invocation (e.g. `-l <user>`
+to select the guest user).
+
 ## Releases
 
 Tagged pushes (`v*.*.*`) are built and published automatically via GoReleaser (see

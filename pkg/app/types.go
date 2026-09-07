@@ -59,3 +59,22 @@ type DeleteInput struct {
 	Host string
 	UID  string
 }
+
+type ExecInput struct {
+	Host           string
+	UID            string
+	Cmd            string
+	Args           []string
+	Cwd            string
+	Env            map[string]string
+	Shell          bool
+	User           string
+	TimeoutSeconds int32
+	Stdin          bool
+}
+
+type SSHInput struct {
+	Host    string
+	UID     string
+	SSHArgs []string
+}
