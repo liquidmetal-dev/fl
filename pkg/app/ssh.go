@@ -28,7 +28,10 @@ func (a *app) SSH(ctx context.Context, input *SSHInput) error {
 		return fmt.Errorf("creating ssh-proxy client for %s: %w", address, err)
 	}
 
-	stream, err := client.SSHProxy(ctx)
+	sessionCtx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	stream, err := client.SSHProxy(sessionCtx)
 	if err != nil {
 		return fmt.Errorf("opening ssh-proxy stream: %w", err)
 	}
@@ -60,7 +63,7 @@ func (a *app) SSH(ctx context.Context, input *SSHInput) error {
 		}
 		defer conn.Close()
 
-		bridgeSSHProxy(conn, stream)
+		bridgeSSHProxy(conn, stream, cancel)
 		acceptErrCh <- nil
 	}()
 
@@ -79,6 +82,9 @@ func (a *app) SSH(ctx context.Context, input *SSHInput) error {
 
 	runErr := sshCmd.Run()
 
+	listener.Close()
+	cancel()
+
 	if bridgeErr := <-acceptErrCh; bridgeErr != nil {
 		a.logger.Debugw("ssh proxy bridge ended", "uid", input.UID, "host", input.Host, "error", bridgeErr)
 	}
@@ -90,11 +96,20 @@ func (a *app) SSH(ctx context.Context, input *SSHInput) error {
 	return nil
 }
 
-func bridgeSSHProxy(conn net.Conn, stream microvmsshproxyv1.MicroVMSSHProxy_SSHProxyClient) {
+func bridgeSSHProxy(conn net.Conn, stream microvmsshproxyv1.MicroVMSSHProxy_SSHProxyClient, cancel context.CancelFunc) {
+	// stop unblocks whichever side is still copying once the other side has finished:
+	// closing conn unblocks a pending conn.Read/Write, cancelling the session unblocks a
+	// pending stream.Recv/Send. Both are safe to call more than once.
+	stop := func() {
+		conn.Close()
+		cancel()
+	}
+
 	done := make(chan struct{}, 2)
 
 	go func() {
 		defer func() { done <- struct{}{} }()
+		defer stop()
 
 		buf := make([]byte, 32*1024)
 
@@ -119,6 +134,7 @@ func bridgeSSHProxy(conn net.Conn, stream microvmsshproxyv1.MicroVMSSHProxy_SSHP
 
 	go func() {
 		defer func() { done <- struct{}{} }()
+		defer stop()
 
 		for {
 			resp, err := stream.Recv()
