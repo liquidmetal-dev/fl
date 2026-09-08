@@ -73,9 +73,14 @@ func (a *app) createSSHProxyClient(address string) (microvmsshproxyv1.MicroVMSSH
 	return microvmsshproxyv1.NewMicroVMSSHProxyClient(conn), nil
 }
 
-// resolveGuestAgentAddress calls ServerInfo on host and returns the address of the
-// requested optional guest-agent service (exec or ssh-proxy), or an error if that
-// service isn't enabled on the server.
+// resolveGuestAgentAddress calls ServerInfo on host to confirm the requested
+// optional guest-agent service (exec or ssh-proxy) is enabled, and returns
+// host itself as the address to dial. The guest-agent services are
+// multiplexed on the same gRPC listener as the main flintlock API, so they're
+// always reachable at the same address the caller already used to reach
+// host — the server-reported GuestAgentServiceInfo.Address is its own
+// configured endpoint, which isn't guaranteed to be reachable from the
+// client (e.g. behind NAT or a port-forward), so it's intentionally ignored.
 func (a *app) resolveGuestAgentAddress(
 	ctx context.Context,
 	host string,
@@ -97,5 +102,5 @@ func (a *app) resolveGuestAgentAddress(
 		return "", fmt.Errorf("%s is not enabled on flintlock host %s", name, host)
 	}
 
-	return svc.Address, nil
+	return host, nil
 }
